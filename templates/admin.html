@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Campus - Admin</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+        🏫 Smart Campus
+    </div>
+
+    <div class="nav-links">
+        <a href="/admin">Admin Dashboard</a>
+        <a href="/login">Logout</a>
+    </div>
+
+</nav>
+
+<div class="container">
+
+    <div class="welcome-box">
+
+        <h2>🛠️ Administrator Dashboard</h2>
+
+        <p>
+            Manage and monitor campus maintenance complaints.
+        </p>
+
+    </div>
+
+    <div class="page-header">
+
+        <div>
+            <h1>Complaint Management</h1>
+            <p>Review complaints and update their status.</p>
+        </div>
+
+    </div>
+
+    <div class="card-grid">
+
+        <div class="card stat-card">
+
+            <div class="stat-icon">📋</div>
+
+            <div>
+                <h3>{{ complaints|length }}</h3>
+                <p>Total Complaints</p>
+            </div>
+
+        </div>
+
+        <div class="card stat-card">
+
+            <div class="stat-icon">⏳</div>
+
+            <div>
+                <h3>
+                    {{ complaints|selectattr("status", "equalto", "Pending")|list|length }}
+                </h3>
+                <p>Pending</p>
+            </div>
+
+        </div>
+
+        <div class="card stat-card">
+
+            <div class="stat-icon">✅</div>
+
+            <div>
+                <h3>
+                    {{ complaints|selectattr("status", "equalto", "Resolved")|list|length }}
+                </h3>
+                <p>Resolved</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="table-card">
+
+        <h2>All Campus Complaints</h2>
+
+        {% if complaints %}
+
+        <table>
+
+            <tr>
+                <th>ID</th>
+                <th>Student</th>
+                <th>Complaint</th>
+                <th>Category</th>
+                <th>Location</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+
+            {% for complaint in complaints %}
+
+            <tr>
+
+                <td>#{{ complaint["id"] }}</td>
+
+                <td>
+                    <strong>{{ complaint["name"] }}</strong>
+                </td>
+
+                <td>{{ complaint["title"] }}</td>
+
+                <td>{{ complaint["category"] }}</td>
+
+                <td>📍 {{ complaint["location"] }}</td>
+
+                <td>
+
+                    <span class="badge
+                    {% if complaint['priority'] == 'High' %}
+                    priority-high
+                    {% elif complaint['priority'] == 'Medium' %}
+                    priority-medium
+                    {% else %}
+                    priority-low
+                    {% endif %}">
+
+                        {{ complaint["priority"] }}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <span class="badge
+                    {% if complaint['status'] == 'Pending' %}
+                    status-pending
+                    {% elif complaint['status'] == 'Assigned' %}
+                    status-assigned
+                    {% elif complaint['status'] == 'In Progress' %}
+                    status-progress
+                    {% else %}
+                    status-resolved
+                    {% endif %}">
+
+                        {{ complaint["status"] }}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <form method="POST"
+                          action="/update/{{ complaint['id'] }}">
+
+                        <select name="status">
+
+                            <option value="Pending">
+                                Pending
+                            </option>
+
+                            <option value="Assigned">
+                                Assigned
+                            </option>
+
+                            <option value="In Progress">
+                                In Progress
+                            </option>
+
+                            <option value="Resolved">
+                                Resolved
+                            </option>
+
+                        </select>
+
+                        <button type="submit">
+                            Update
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <div class="icon">📭</div>
+
+            <h3>No Complaints</h3>
+
+            <p>There are currently no campus complaints.</p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<div class="footer">
+    Smart Campus Complaint & Maintenance System — Admin Panel
+</div>
+
+</body>
+</html>

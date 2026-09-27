@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Campus - Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+        🏫 Smart Campus
+    </div>
+
+    <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/complaint">Report Problem</a>
+        <a href="/login">Logout</a>
+    </div>
+
+</nav>
+
+<div class="container">
+
+    <div class="welcome-box">
+
+        <h2>
+            Welcome, {{ session["name"] }} 👋
+        </h2>
+
+        <p>
+            Report campus problems and track their resolution status.
+        </p>
+
+    </div>
+
+    <div class="page-header">
+
+        <div>
+            <h1>My Complaints</h1>
+            <p>Track all the problems you have reported.</p>
+        </div>
+
+        <a href="/complaint" class="btn">
+            + Report Complaint
+        </a>
+
+    </div>
+
+    <div class="card-grid">
+
+        <div class="card stat-card">
+
+            <div class="stat-icon">📋</div>
+
+            <div>
+                <h3>{{ complaints|length }}</h3>
+                <p>Total Complaints</p>
+            </div>
+
+        </div>
+
+        <div class="card stat-card">
+
+            <div class="stat-icon">⏳</div>
+
+            <div>
+                <h3>
+                    {{ complaints|selectattr("status", "equalto", "Pending")|list|length }}
+                </h3>
+                <p>Pending</p>
+            </div>
+
+        </div>
+
+        <div class="card stat-card">
+
+            <div class="stat-icon">✅</div>
+
+            <div>
+                <h3>
+                    {{ complaints|selectattr("status", "equalto", "Resolved")|list|length }}
+                </h3>
+                <p>Resolved</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="table-card">
+
+        <h2>Complaint History</h2>
+
+        {% if complaints %}
+
+        <table>
+
+            <tr>
+                <th>ID</th>
+                <th>Complaint</th>
+                <th>Category</th>
+                <th>Location</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Date</th>
+            </tr>
+
+            {% for complaint in complaints %}
+
+            <tr>
+
+                <td>#{{ complaint["id"] }}</td>
+
+                <td>
+                    <strong>{{ complaint["title"] }}</strong>
+                </td>
+
+                <td>{{ complaint["category"] }}</td>
+
+                <td>📍 {{ complaint["location"] }}</td>
+
+                <td>
+
+                    <span class="badge
+                    {% if complaint['priority'] == 'High' %}
+                    priority-high
+                    {% elif complaint['priority'] == 'Medium' %}
+                    priority-medium
+                    {% else %}
+                    priority-low
+                    {% endif %}">
+
+                        {{ complaint["priority"] }}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <span class="badge
+                    {% if complaint['status'] == 'Pending' %}
+                    status-pending
+                    {% elif complaint['status'] == 'Assigned' %}
+                    status-assigned
+                    {% elif complaint['status'] == 'In Progress' %}
+                    status-progress
+                    {% else %}
+                    status-resolved
+                    {% endif %}">
+
+                        {{ complaint["status"] }}
+
+                    </span>
+
+                </td>
+
+                <td>{{ complaint["created_at"] }}</td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+        {% else %}
+
+        <div class="empty-state">
+
+            <div class="icon">📭</div>
+
+            <h3>No Complaints Yet</h3>
+
+            <p>You haven't reported any campus problems.</p>
+
+            <br>
+
+            <a href="/complaint" class="btn">
+                Report Your First Complaint
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<div class="footer">
+    Smart Campus Complaint & Maintenance System
+</div>
+
+</body>
+</html>
