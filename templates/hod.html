@@ -1,0 +1,27 @@
+{% extends "staff_base.html" %}
+{% from "_macros.html" import icon, ticket, empty %}
+
+{% block title %}Head of Department | Smart Campus{% endblock %}
+{% block role_key %}hod{% endblock %}
+{% block role_title %}Head of Department{% endblock %}
+{% block role_blurb %}Review verified complaints and give the final approval.{% endblock %}
+{% block queue_heading %}Complaints waiting for final approval{% endblock %}
+
+{% block queue %}
+{% if complaints %}
+    {% for complaint in complaints %}
+        {% call ticket(complaint, [
+            ('Student', complaint['name']),
+            ('Category', complaint['category']),
+            ('Location', complaint['location']),
+            ('Tutor', complaint['tutor_status'])
+        ]) %}
+        <form method="POST" action="/hod/approve/{{ complaint['id'] }}" class="actions">
+            <button type="submit" class="btn btn-success">{{ icon('check', 18) }}Approve and resolve</button>
+        </form>
+        {% endcall %}
+    {% endfor %}
+{% else %}
+    {{ empty('circle-check', 'Nothing waiting for approval', 'Complaints verified by the tutor will show up here.') }}
+{% endif %}
+{% endblock %}

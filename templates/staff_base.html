@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon, role_icon, pipeline, notif_list %}
+
+{#
+   Shared layout for Admin, Maintenance, Tutor and HOD.
+   Child pages fill in: title, role_key, role_title, role_blurb,
+   queue_heading, queue (the complaint cards), and optionally stats.
+   Logout lives ONLY in the top navbar.
+#}
+
+{% block content %}
+{% set unread = notifications|selectattr('is_read', 'equalto', 0)|list|length %}
+
+<section class="page-head">
+    <div class="wrap page-head-inner">
+        <div class="page-head-text">
+            <span class="role-tile">{{ role_icon(self.role_key()|trim, 26) }}</span>
+            <div>
+                <h1>{% block role_title %}{% endblock %}</h1>
+                <p>Welcome, {{ session.get('name') }}. {% block role_blurb %}{% endblock %}</p>
+            </div>
+        </div>
+
+        <dl class="stat-row">
+            {% block stats %}
+            <div class="stat">
+                <dt>{% block queue_stat_label %}Waiting for you{% endblock %}</dt>
+                <dd>{{ complaints|length }}</dd>
+            </div>
+            {% endblock %}
+            <div class="stat {{ 'is-alert' if unread }}">
+                <dt>Unread notifications</dt>
+                <dd>{{ unread }}</dd>
+            </div>
+        </dl>
+    </div>
+</section>
+
+<main class="wrap layout">
+    <section class="queue" aria-labelledby="queue-heading">
+        <h2 class="section-heading" id="queue-heading">{% block queue_heading %}{% endblock %}</h2>
+        {% block queue %}{% endblock %}
+    </section>
+
+    <aside class="panel side" id="notifications" aria-labelledby="notif-heading">
+        <div class="panel-head">
+            <h2 id="notif-heading">{{ icon('bell', 20) }}Notifications</h2>
+            {% if unread %}<span class="chip chip-amber">{{ unread }} new</span>{% endif %}
+        </div>
+        {{ notif_list(notifications) }}
+    </aside>
+</main>
+
+<section class="wrap flow-wrap">
+    <p class="flow-caption">Complaint journey. Your step is highlighted.</p>
+    {{ pipeline(self.role_key()|trim) }}
+</section>
+{% endblock %}

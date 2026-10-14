@@ -1,0 +1,32 @@
+{% extends "staff_base.html" %}
+{% from "_macros.html" import icon, ticket, empty %}
+
+{% block title %}Tutor | Smart Campus{% endblock %}
+{% block role_key %}tutor{% endblock %}
+{% block role_title %}Tutor Department{% endblock %}
+{% block role_blurb %}Check the work after maintenance has rectified a complaint.{% endblock %}
+{% block queue_heading %}Complaints waiting for verification{% endblock %}
+
+{% block queue %}
+{% if complaints %}
+    {% for complaint in complaints %}
+        {% call ticket(complaint, [
+            ('Student', complaint['name']),
+            ('Category', complaint['category']),
+            ('Location', complaint['location']),
+            ('Maintenance', complaint['maintenance_status'])
+        ]) %}
+        <div class="actions">
+            <form method="POST" action="/tutor/verify/{{ complaint['id'] }}">
+                <button type="submit" class="btn btn-success">{{ icon('check', 18) }}Verify work</button>
+            </form>
+            <form method="POST" action="/tutor/reject/{{ complaint['id'] }}">
+                <button type="submit" class="btn btn-danger-outline">{{ icon('x', 18) }}Reject and send back</button>
+            </form>
+        </div>
+        {% endcall %}
+    {% endfor %}
+{% else %}
+    {{ empty('circle-check', 'Nothing to verify right now', 'Complaints that maintenance has rectified will show up here.') }}
+{% endif %}
+{% endblock %}

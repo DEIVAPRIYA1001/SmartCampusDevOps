@@ -1,0 +1,21 @@
+---
+- name: Deploy Smart Campus Application
+  hosts: local
+  connection: local
+  become: false
+  tasks:
+    - name: Check Docker
+      command: docker.exe --version
+    - name: Stop old Smart Campus container
+      command: docker.exe rm -f smart-campus-app
+      ignore_errors: true
+    - name: Build Smart Campus Docker image
+      command: docker.exe build -t smart-campus D:\SmartCampusDevOps
+    - name: Run Smart Campus container
+      command: docker.exe run -d -p 5000:5000 --name smart-campus-app smart-campus
+    - name: Show running containers
+      command: docker.exe ps
+      register: containers
+    - name: Display running containers
+      debug:
+        var: containers.stdout

@@ -1,56 +1,60 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Smart Campus - Login</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
+{% extends "base.html" %}
+{% from "_macros.html" import icon, role_icon %}
 
-<body>
+{% block title %}Sign in | Smart Campus{% endblock %}
+{% block nav %}{% endblock %}
+{% block footer %}{% endblock %}
 
-<div class="auth-container">
+{% block content %}
+{% set labels = {'student': 'Student', 'admin': 'Admin', 'maintenance': 'Maintenance', 'tutor': 'Tutor', 'hod': 'Head of Department'} %}
+{% set key = selected_role if selected_role in labels else 'student' %}
 
-    <div class="auth-card">
+<div class="auth">
+    <aside class="auth-aside">
+        <a class="brand brand-light" href="/">
+            <span class="brand-mark">{{ icon('school', 20) }}</span>
+            <span>Smart Campus</span>
+        </a>
+        <div class="auth-pitch">
+            <h2>Every complaint gets an owner and a status.</h2>
+            <p>From the first report to the HOD's final approval, nothing gets lost between departments.</p>
+        </div>
+        <p class="auth-foot">Complaint &amp; Maintenance System</p>
+    </aside>
 
-        <div class="auth-icon">🏫</div>
+    <main class="auth-main">
+        <div class="auth-card">
+            <span class="role-tile role-tile-dark">{{ role_icon(key, 26) }}</span>
+            <h1>{{ labels[key] }} sign in</h1>
+            <p class="lede">Use your campus email and password.</p>
 
-        <h1>Smart Campus</h1>
+            {% if error %}
+            <div class="alert alert-error" role="alert">{{ error }}</div>
+            {% endif %}
 
-        <h2>Welcome Back</h2>
+            <form method="POST" action="/login">
+                <input type="hidden" name="selected_role" value="{{ key }}">
 
-        <form method="POST">
+                <div class="field">
+                    <label for="email">Email address</label>
+                    <input id="email" type="email" name="email" placeholder="you@campus.com" autocomplete="email" required>
+                </div>
 
-            <div class="form-group">
-                <label>Email Address</label>
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Enter your email"
-                    required>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg btn-block">Sign in</button>
+            </form>
+
+            <div class="auth-links">
+                {% if key == 'student' %}
+                <p>New student? <a href="/register">Create an account</a></p>
+                {% endif %}
+                <p><a href="/">{{ icon('arrow-left', 14) }}Back to home</a></p>
             </div>
-
-            <div class="form-group">
-                <label>Password</label>
-                <input
-                    type="password"
-                    name="password"
-                    placeholder="Enter your password"
-                    required>
-            </div>
-
-            <button type="submit" style="width:100%;">
-                Login
-            </button>
-
-        </form>
-
-        <p style="text-align:center; margin-top:20px;">
-            Don't have an account?
-            <a href="/register">Create Account</a>
-        </p>
-
-    </div>
-
+        </div>
+    </main>
 </div>
-
-</body>
-</html>
+{% endblock %}

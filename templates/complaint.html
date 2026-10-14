@@ -1,122 +1,68 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Smart Campus - Report Complaint</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
 
-<body>
+{% block title %}Report a Problem | Smart Campus{% endblock %}
 
-<nav class="navbar">
+{% block content %}
+<main class="wrap form-page">
+    <a href="/dashboard" class="back-link">{{ icon('arrow-left', 16) }}Back to dashboard</a>
 
-    <div class="logo">
-        🏫 Smart Campus
-    </div>
-
-    <div class="nav-links">
-        <a href="/dashboard">Dashboard</a>
-        <a href="/login">Logout</a>
-    </div>
-
-</nav>
-
-<div class="container">
-
-    <div class="form-card">
-
-        <h2>📝 Report a Campus Problem</h2>
-
-        <p style="color:#78909c; margin-bottom:25px;">
-            Provide details about the problem so the maintenance team
-            can resolve it quickly.
-        </p>
+    <div class="panel form-card">
+        <h1>Report a campus problem</h1>
+        <p class="lede">The more detail you give, the faster maintenance can fix it.</p>
 
         <form method="POST">
-
-            <div class="form-group">
-
-                <label>Complaint Title</label>
-
-                <input
-                    type="text"
-                    name="title"
-                    placeholder="Example: Classroom fan not working"
-                    required>
-
+            <div class="field">
+                <label for="title">What is the problem?</label>
+                <input id="title" type="text" name="title" placeholder="Classroom fan is not working" required>
             </div>
 
-            <div class="form-group">
+            <div class="field-row">
+                <div class="field">
+                    <label for="category">Category</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select a category</option>
+                        <option value="Electrical">Electrical</option>
+                        <option value="Water">Water</option>
+                        <option value="Internet">Internet</option>
+                        <option value="Cleaning">Cleaning</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Classroom">Classroom</option>
+                        <option value="Laboratory">Laboratory</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
 
-                <label>Category</label>
-
-                <select name="category" required>
-
-                    <option value="">Select Category</option>
-                    <option value="Electrical">⚡ Electrical</option>
-                    <option value="Water">💧 Water</option>
-                    <option value="Internet">🌐 Internet</option>
-                    <option value="Cleaning">🧹 Cleaning</option>
-                    <option value="Furniture">🪑 Furniture</option>
-                    <option value="Classroom">🏫 Classroom</option>
-                    <option value="Laboratory">🔬 Laboratory</option>
-                    <option value="Other">📌 Other</option>
-
-                </select>
-
+                <div class="field">
+                    <label for="location">Where is it?</label>
+                    <input id="location" type="text" name="location" placeholder="Block A, Room 203" required>
+                </div>
             </div>
 
-            <div class="form-group">
-
-                <label>Description</label>
-
-                <textarea
-                    name="description"
-                    placeholder="Describe the problem in detail..."
-                    required></textarea>
-
+            <div class="field">
+                <label for="description">Details</label>
+                <textarea id="description" name="description" placeholder="What is happening, and since when?" required></textarea>
             </div>
 
-            <div class="form-group">
+            <fieldset class="field">
+                <legend>How urgent is it?</legend>
+                <div class="seg">
+                    <input type="radio" id="p-low" name="priority" value="Low" required>
+                    <label for="p-low" class="seg-low">Low<small>Can wait</small></label>
 
-                <label>Location</label>
+                    <input type="radio" id="p-medium" name="priority" value="Medium">
+                    <label for="p-medium" class="seg-medium">Medium<small>Needs fixing soon</small></label>
 
-                <input
-                    type="text"
-                    name="location"
-                    placeholder="Example: Block A - Room 203"
-                    required>
+                    <input type="radio" id="p-high" name="priority" value="High">
+                    <label for="p-high" class="seg-high">High<small>Blocks classes</small></label>
+                </div>
+            </fieldset>
 
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg">Submit complaint</button>
+                <a href="/dashboard" class="btn btn-outline btn-lg">Cancel</a>
             </div>
-
-            <div class="form-group">
-
-                <label>Priority</label>
-
-                <select name="priority" required>
-
-                    <option value="">Select Priority</option>
-                    <option value="Low">🟢 Low</option>
-                    <option value="Medium">🟡 Medium</option>
-                    <option value="High">🔴 High</option>
-
-                </select>
-
-            </div>
-
-            <button type="submit">
-                Submit Complaint
-            </button>
-
-            <a href="/dashboard" class="btn"
-               style="background:#78909c; margin-left:8px;">
-                Cancel
-            </a>
-
         </form>
-
     </div>
-
-</div>
-
-</body>
-</html>
+</main>
+{% endblock %}

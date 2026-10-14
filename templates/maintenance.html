@@ -1,0 +1,27 @@
+{% extends "staff_base.html" %}
+{% from "_macros.html" import icon, ticket, empty %}
+
+{% block title %}Maintenance | Smart Campus{% endblock %}
+{% block role_key %}maintenance{% endblock %}
+{% block role_title %}Maintenance Department{% endblock %}
+{% block role_blurb %}Fix the problems assigned to you and mark them as rectified.{% endblock %}
+{% block queue_heading %}Complaints assigned to maintenance{% endblock %}
+
+{% block queue %}
+{% if complaints %}
+    {% for complaint in complaints %}
+        {% call ticket(complaint, [
+            ('Student', complaint['name']),
+            ('Category', complaint['category']),
+            ('Location', complaint['location']),
+            ('Current status', complaint['status'])
+        ]) %}
+        <form method="POST" action="/maintenance/rectify/{{ complaint['id'] }}" class="actions">
+            <button type="submit" class="btn btn-success">{{ icon('check', 18) }}Mark as rectified</button>
+        </form>
+        {% endcall %}
+    {% endfor %}
+{% else %}
+    {{ empty('circle-check', 'Nothing to fix right now', 'New complaints forwarded by the admin will show up here.') }}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon, role_icon %}
+
+{% block title %}Smart Campus Complaint &amp; Maintenance System{% endblock %}
+
+{% block content %}
+{% set role = session.get('role') %}
+{% set homes = {'student': '/dashboard', 'admin': '/admin', 'maintenance': '/maintenance', 'tutor': '/tutor', 'hod': '/hod'} %}
+
+<!-- HERO -->
+<section class="hero">
+    <div class="wrap hero-inner">
+        <div class="hero-copy">
+            <h1>Report a campus problem. Follow it until it's fixed.</h1>
+            <p class="hero-lede">
+                Students file a complaint, maintenance fixes it, a tutor checks the work
+                and the HOD signs it off. Every step is visible to everyone involved.
+            </p>
+            <div class="hero-actions">
+                {% if role %}
+                    <a href="{{ homes[role] }}" class="btn btn-accent btn-lg">Go to my dashboard{{ icon('arrow-right', 18) }}</a>
+                {% else %}
+                    <a href="/login?role=student" class="btn btn-accent btn-lg">Report a problem{{ icon('arrow-right', 18) }}</a>
+                    <a href="#portals" class="btn btn-ghost btn-lg">Staff sign in</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="demo" role="img" aria-label="Example complaint, Classroom fan is not working, currently waiting for tutor verification">
+            <div class="demo-top">
+                <span class="ticket-id">#128</span>
+                <span class="chip chip-high">High priority</span>
+            </div>
+            <h2>Classroom fan is not working</h2>
+            <p class="demo-where">{{ icon('map-pin', 16) }}Block A, Room 203</p>
+
+            <ol class="tracker">
+                <li class="done">Filed</li>
+                <li class="done">Assigned</li>
+                <li class="done">Fixed</li>
+                <li class="now">Verified</li>
+                <li>Approved</li>
+                <li>Resolved</li>
+            </ol>
+
+            <p class="demo-note">{{ icon('clock', 16) }}Waiting for the tutor to verify the repair</p>
+        </div>
+    </div>
+</section>
+
+<!-- PORTALS -->
+<section class="section" id="portals">
+    <div class="wrap">
+        <div class="section-intro">
+            <h2>Sign in to your portal</h2>
+            <p>Each role sees only the work that is waiting for them.</p>
+        </div>
+
+        <div class="portal-grid">
+            {% set portals = [
+                ('student', 'Student', 'Submit complaints and track every step.'),
+                ('admin', 'Admin', 'Monitor all complaints across the workflow.'),
+                ('maintenance', 'Maintenance', 'Fix assigned problems and mark them rectified.'),
+                ('tutor', 'Tutor', 'Verify the repair, or send it back.'),
+                ('hod', 'Head of Department', 'Give the final approval and close the complaint.')
+            ] %}
+
+            {% for key, label, blurb in portals %}
+            {% set count = notification_counts[key] %}
+            <article class="portal">
+                <span class="role-tile">{{ role_icon(key, 24) }}</span>
+                <h3>{{ label }}</h3>
+                <p>{{ blurb }}</p>
+
+                {% if count > 0 %}
+                    <span class="pill pill-new">{{ icon('bell', 14) }}{{ count }} new<span class="sr"> notification{{ 's' if count != 1 }}</span></span>
+                {% else %}
+                    <span class="pill pill-quiet">{{ icon('check', 14) }}All caught up</span>
+                {% endif %}
+
+                <a href="/login?role={{ key }}" class="btn btn-primary btn-block">Sign in</a>
+
+            </article>
+            {% endfor %}
+        </div>
+
+        {% if not role %}
+        <p class="portal-note">New student? <a href="/register">Create an account</a> to start reporting problems.</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section section-alt">
+    <div class="wrap">
+        <div class="section-intro">
+            <h2>How a complaint moves</h2>
+            <p>Every complaint goes through the same checks, so nothing is marked done until it really is.</p>
+        </div>
+
+        <ol class="steps">
+            <li>
+                <span class="step-no">1</span>
+                <h3>Student reports</h3>
+                <p>Describe the problem, add the location and choose how urgent it is.</p>
+            </li>
+            <li>
+                <span class="step-no">2</span>
+                <h3>Maintenance fixes</h3>
+                <p>The admin is kept informed while maintenance repairs the issue.</p>
+            </li>
+            <li>
+                <span class="step-no">3</span>
+                <h3>Tutor verifies</h3>
+                <p>The tutor checks the work, or sends it back if it is not right.</p>
+            </li>
+            <li>
+                <span class="step-no">4</span>
+                <h3>HOD approves</h3>
+                <p>The Head of Department gives the final approval.</p>
+            </li>
+            <li>
+                <span class="step-no">5</span>
+                <h3>Student is told</h3>
+                <p>The complaint is marked resolved and the student gets a notification.</p>
+            </li>
+        </ol>
+    </div>
+</section>
+{% endblock %}
